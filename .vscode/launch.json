@@ -1,0 +1,38 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "dart.flutterSdkPath": "C:/flutterbase/flutter",
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "wkl_mobile",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": ["--flavor=env_dev"],
+        },
+        {
+            "name": "env_release",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": ["--flavor=env_release"],
+        },
+        {
+            "name": "env_release_32",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": ["--flavor=env_release_32"],
+        },
+        {
+            "name": "env_test",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": ["--flavor=env_test"],
+        }
+    ]
+}

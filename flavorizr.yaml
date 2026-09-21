@@ -1,0 +1,24 @@
+flavors:
+  env_dev:
+    app:
+      name: "客车管理（本地测试）"
+    android:
+      applicationId: "ck.wkl_mobile_dev"
+  env_release:
+    app:
+      name: "客车管理子系统"
+    android:
+      applicationId: "ck.wkl_mobile_release"
+      icon: "./assets/icons/icon_release.png"
+  env_release_32:
+    app:
+      name: "客车管理子系统"
+    android:
+      applicationId: "ck.wkl_mobile_release_32"
+      icon: "./assets/icons/icon_release_x32.png"
+  env_test:
+    app:
+      name: "客车管理子系统（测试）"
+    android:
+      applicationId: "ck.wkl_mobile_test"
+      icon: "./assets/icons/icon_test.jpg"

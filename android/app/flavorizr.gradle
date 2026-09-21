@@ -1,0 +1,26 @@
+android {
+    flavorDimensions += "flavor-type"
+
+    productFlavors {
+        env_dev {
+            dimension "flavor-type"
+            applicationId "ck.wkl_mobile_dev"
+            resValue "string", "app_name", "客车管理（本地测试）"
+        }
+        env_release {
+            dimension "flavor-type"
+            applicationId "ck.wkl_mobile_release"
+            resValue "string", "app_name", "客车管理子系统"
+        }
+        env_release_32 {
+            dimension "flavor-type"
+            applicationId "ck.wkl_mobile_release_32"
+            resValue "string", "app_name", "客车管理子系统"
+        }
+        env_test {
+            dimension "flavor-type"
+            applicationId "ck.wkl_mobile_test"
+            resValue "string", "app_name", "客车管理子系统（测试）"
+        }
+    }
+}
