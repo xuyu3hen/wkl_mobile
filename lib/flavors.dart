@@ -29,7 +29,8 @@ class F {
         // 高
         // return 'http://10.105.84.110:8080';
         // 祝
-        return 'http://10.105.84.170:8080';
+        // return 'http://10.105.84.170:8080';
+        return 'http://10.105.84.110:8190';
       case Flavor.env_release:
         return 'https://wkl.wkl.com';
       case Flavor.env_release_32:

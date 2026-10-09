@@ -12,11 +12,22 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _pwdController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
+  bool _rememberPwd = false;
 
-  // 初始化API
+  // 初始化API，回填已记住的账号密码
   @override
   void initState() {
     super.initState();
+    _loadRememberedAccount();
+  }
+
+  void _loadRememberedAccount() async {
+    final r = await Global.loadRememberedAccount();
+    if (r.username.isNotEmpty) {
+      _unameController.text = r.username;
+      _pwdController.text = r.password;
+      setState(() => _rememberPwd = true);
+    }
   }
 
   @override
@@ -30,83 +41,124 @@ class _LoginPageState extends State<LoginPage> {
             alignment: Alignment.bottomRight,
           ),
         ),
-        child:Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/page_title.png'),
-                    alignment: Alignment.topLeft,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 30,right: 30,top: 20),
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _unameController,
-                      decoration: const InputDecoration(
-                        labelText: "用户名",
-                        hintText: "用户名",
-                        prefixIcon: Icon(Icons.person),
-                      ),
-
-                      // 校验用户名
-                      validator: (v) {
-                        return v == null||v.trim().isNotEmpty ? null :  "用户名不能为空";
-                      },
-                    ),
-
-                    const SizedBox(height: 10,),
-
-                    TextFormField(
-                      controller: _pwdController,
-                      decoration: InputDecoration(
-                        labelText: "密码",
-                        hintText: "密码",
-                        prefixIcon: const Icon(Icons.lock),
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.visibility_off),
-                          onPressed: (){
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 24),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Logo
+                      Image.asset('assets/images/logo.png', height: 72),
+                      const SizedBox(height: 12),
+                      // 应用标题
+                      Text(
+                        F.title,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
                         ),
                       ),
-                      // 密码是否显示
-                      obscureText: !_isPasswordVisible,
-                      // 校验密码
-                      validator: (v) {
-                        return v == null||v.trim().isNotEmpty ? null :  "密码不能为空";
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 25,left: 30,right: 30),
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints.expand(
-                          height: 55,
+                      const SizedBox(height: 32),
+                      TextFormField(
+                        controller: _unameController,
+                        style: const TextStyle(fontSize: 16),
+                        decoration: const InputDecoration(
+                          labelText: "用户名",
+                          hintText: "请输入用户名",
+                          prefixIcon: Icon(Icons.person),
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
                         ),
+
+                        // 校验用户名
+                        validator: (v) {
+                          return v == null||v.trim().isNotEmpty ? null :  "用户名不能为空";
+                        },
+                      ),
+
+                      const SizedBox(height: 16,),
+
+                      TextFormField(
+                        controller: _pwdController,
+                        style: const TextStyle(fontSize: 16),
+                        decoration: InputDecoration(
+                          labelText: "密码",
+                          hintText: "请输入密码",
+                          prefixIcon: const Icon(Icons.lock),
+                          border: const OutlineInputBorder(),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                          suffixIcon: IconButton(
+                            icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                            onPressed: (){
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        // 密码是否显示
+                        obscureText: !_isPasswordVisible,
+                        // 校验密码
+                        validator: (v) {
+                          return v == null||v.trim().isNotEmpty ? null :  "密码不能为空";
+                        },
+                      ),
+                      // 记住账号密码
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () =>
+                              setState(() => _rememberPwd = !_rememberPwd),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  _rememberPwd
+                                      ? Icons.check_box
+                                      : Icons.check_box_outline_blank,
+                                  color: Colors.blue,
+                                  size: 22,
+                                ),
+                                const SizedBox(width: 6),
+                                const Text(
+                                  '记住账号密码',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black87),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20,),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
                         child: ElevatedButton(
                           onPressed: _loginIn,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
-                          child: const Text("登录",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
+                          child: const Text("登录",style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.bold),),
                         ),
                       ),
-                    ),
-                    // 更新按钮预留位置
-                  ],
+                      // 更新按钮预留位置
+                    ],
+                  ),
                 ),
-              )
-            ],
+              ),
+            ),
           ),
-        )
+        ),
       ),
     );
   }
@@ -122,22 +174,40 @@ class _LoginPageState extends State<LoginPage> {
             "password": _pwdController.text,
           }
         );
-        if(r.statusCode == 200){
+        // 业务码以响应体 code 为准（HTTP 200 时 body 仍可能是失败）
+        final code = r.data is Map ? r.data["code"] : null;
+        if(r.statusCode == 200 && code == 200){
           // 持久化登录凭证（同步内存 + 持久化 + 恢复 Cookie）
           await Global.saveAuth(
-            r.data["token"] as String,
-            r.data["data"] as String,
+            r.data["token"] as String? ?? "",
+            r.data["data"] as String? ?? "",
+            r.data["ruoyiToken"] as String? ?? "",
           );
 
           var userInfo = await UserApi().getProfile();
-          if(userInfo.statusCode == 200){
-            Global.profile = Profile.fromJson(userInfo.data['data']);
+          final infoCode = userInfo.data is Map ? userInfo.data["code"] : null;
+          if(userInfo.statusCode == 200 && infoCode == 200){
+            try {
+              Global.profile = Profile.fromJson(userInfo.data['data']);
+            } catch (e) {
+              // 字段结构不匹配：保留登录态，首页信息区显示“未登录”，日志可查原始报文
+              debugPrint('profile parse error: $e');
+            }
             await Global.setLogin(true);
+            // 按勾选状态决定是否记住账号密码
+            if (_rememberPwd) {
+              await Global.saveRememberedAccount(
+                _unameController.text.trim(),
+                _pwdController.text,
+              );
+            } else {
+              await Global.clearRememberedAccount();
+            }
           }else{
             // profile 拉取失败：撤销刚保存的凭证，避免脏数据
             await Global.clear();
             SmartDialog.dismiss();
-            SmartDialog.showToast(userInfo.data["获取用户信息失败，请检查网络"]);
+            SmartDialog.showToast("获取用户信息失败，请检查网络");
             return;
           }
           SmartDialog.dismiss();
@@ -147,11 +217,14 @@ class _LoginPageState extends State<LoginPage> {
           }
         }else{
           SmartDialog.dismiss();
-          SmartDialog.showToast(r.data["账号或密码错误"]);
+          SmartDialog.showToast((r.data is Map ? (r.data["msg"] ?? "账号或密码错误") : "账号或密码错误").toString());
         }
       }on DioException catch(e){
         SmartDialog.dismiss();
-        SmartDialog.showToast(e.toString());
+        SmartDialog.showToast(e.message ?? e.toString());
+      } catch (e) {
+        SmartDialog.dismiss();
+        SmartDialog.showToast("登录异常：$e");
       }
     }
   }

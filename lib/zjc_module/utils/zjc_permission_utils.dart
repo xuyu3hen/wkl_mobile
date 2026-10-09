@@ -45,7 +45,7 @@ class ZjcPermissionUtils {
   static _showDialog(String message) {
     Future.delayed(const Duration(milliseconds: 200), () {
       // TODO:这里context树待观察
-      BuildContext context = HomePage.navigatorKey.currentContext!;
+      BuildContext context = navigatorKey.currentContext!;
       ZjcDialog.show(context, title: '提示', content: message, clickBtnPop: false, onConfirm: () {
         Navigator.of(context).pop(false);
         openAppSettings();

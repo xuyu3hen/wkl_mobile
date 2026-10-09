@@ -25,6 +25,42 @@ class BaseApi {
     if (_initialized) return;
     _cookieJar = CookieJar();
     dio.interceptors.add(CookieManager(_cookieJar!));
+    dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) {
+        if (Global.ruoyiToken.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer ${Global.ruoyiToken}';
+        }
+        // 请求日志（BEGIN/END 包裹，便于核对接口字段）
+        debugPrint('================== BEGIN REQUEST ==================');
+        debugPrint('${options.method} ${options.uri}');
+        debugPrint('Headers: ${options.headers}');
+        if (options.queryParameters.isNotEmpty) {
+          debugPrint('Query: ${options.queryParameters}');
+        }
+        if (options.data != null) {
+          debugPrint('Body: ${options.data}');
+        }
+        debugPrint('================== END REQUEST ==================');
+        handler.next(options);
+      },
+      onResponse: (response, handler) {
+        debugPrint('================== BEGIN RESPONSE ==================');
+        debugPrint('${response.statusCode} ${response.requestOptions.uri}');
+        debugPrint('Data: ${response.data}');
+        debugPrint('================== END RESPONSE ==================');
+        handler.next(response);
+      },
+      onError: (e, handler) {
+        debugPrint('================== BEGIN ERROR ==================');
+        debugPrint('${e.response?.statusCode} ${e.requestOptions.uri}');
+        debugPrint('Message: ${e.message}');
+        if (e.response != null) {
+          debugPrint('Data: ${e.response?.data}');
+        }
+        debugPrint('================== END ERROR ==================');
+        handler.next(e);
+      },
+    ));
     _initialized = true;
   }
 

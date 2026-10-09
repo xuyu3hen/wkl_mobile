@@ -9,6 +9,10 @@ void main() async {
   );
 
   WidgetsFlutterBinding.ensureInitialized();
+  // 锁定竖屏，不允许左右翻转横屏
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   await BaseApi.init();
   await Global.init();
   // 自动登录：本地存在有效凭证时，恢复 Cookie 并刷新用户信息
@@ -25,7 +29,8 @@ Future<void> _tryAutoLogin() async {
   try {
     await BaseApi.saveCookies(Global.token, Global.adminToken);
     final r = await UserApi().getProfile();
-    if (r.statusCode == 200) {
+    final code = r.data is Map ? r.data['code'] : null;
+    if (r.statusCode == 200 && code == 200) {
       Global.profile = Profile.fromJson(r.data['data']);
     } else {
       // token 失效：清除本地登录态
